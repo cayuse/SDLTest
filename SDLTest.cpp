@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
+#include <SDL2/SDL_image.h>
 #include "res_path.h"
 #include "cleanup.h"
 
