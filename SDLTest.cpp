@@ -203,6 +203,26 @@ renderTexture(image, renderer, x, y);
 SDL_RenderPresent(renderer);
 SDL_Delay(2000);
 
+SDL_Event e;
+bool quit = false;
+while (!quit){
+	while (SDL_PollEvent(&e)){
+		if (e.type == SDL_QUIT){
+			quit = true;
+		}
+		if (e.type == SDL_KEYDOWN){
+			quit = true;
+		}
+		if (e.type == SDL_MOUSEBUTTONDOWN){
+			quit = true;
+		}
+	}
+	//Render the scene
+	SDL_RenderClear(renderer);
+	renderTexture(image, renderer, x, y);
+	SDL_RenderPresent(renderer);
+}
+
 cleanup(background, image, renderer, window);
 SDL_Quit();
 
