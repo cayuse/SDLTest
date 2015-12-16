@@ -140,11 +140,24 @@ if (renderer == nullptr){
 	return 1;
 }
 
+/*
 const std::string resPath = getResourcePath("Lesson2");
 SDL_Texture *background = loadTexture(resPath + "background.bmp", renderer);
 SDL_Texture *image = loadTexture(resPath + "image.bmp", renderer);
 if (background == nullptr || image == nullptr){
 	cleanup(background, image, renderer, window);
+	SDL_Quit();
+	return 1;
+}
+*/
+
+const std::string resPath = getResourcePath("Lesson3");
+SDL_Texture *background = loadTexture(resPath + "background.png", renderer);
+SDL_Texture *image = loadTexture(resPath + "image.png", renderer);
+//Make sure they both loaded ok
+if (background == nullptr || image == nullptr){
+	cleanup(background, image, renderer, window);
+	IMG_Quit();
 	SDL_Quit();
 	return 1;
 }
@@ -166,6 +179,29 @@ renderTexture(image, renderer, x, y);
 
 SDL_RenderPresent(renderer);
 SDL_Delay(1000);
+
+//Determine how many tiles we'll need to fill the screen
+int xTiles = SCREEN_WIDTH / TILE_SIZE;
+int yTiles = SCREEN_HEIGHT / TILE_SIZE;
+
+//Draw the tiles by calculating their positions
+for (int i = 0; i < xTiles * yTiles; ++i){
+	int x = i % xTiles;
+	int y = i / xTiles;
+	renderTexture(background, renderer, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE,
+		TILE_SIZE);
+}
+
+int iW, iH;
+SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
+int x = SCREEN_WIDTH / 2 - iW / 2;
+int y = SCREEN_HEIGHT / 2 - iH / 2;
+renderTexture(image, renderer, x, y);
+
+
+
+SDL_RenderPresent(renderer);
+SDL_Delay(2000);
 
 cleanup(background, image, renderer, window);
 SDL_Quit();
