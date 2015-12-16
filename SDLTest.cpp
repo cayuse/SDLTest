@@ -111,7 +111,7 @@ renderTexture(image, renderer, x, y);
 SDL_RenderPresent(renderer);
 SDL_Delay(1000);
 
-cleanup(background, image, render, window);
+cleanup(background, image, renderer, window);
 SDL_Quit();
 
 }
