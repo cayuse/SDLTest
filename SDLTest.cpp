@@ -3,6 +3,10 @@
 #include <SDL.h>
 #include "res_path.h"
 
+const int SCREEN_WIDTH  = 640;
+const int SCREEN_HEIGHT = 480;
+
+
 int main(int argc, char **argv){
 
 if (SDL_Init(SDL_INIT_VIDEO) != 0){
