@@ -192,10 +192,10 @@ for (int i = 0; i < xTiles * yTiles; ++i){
 		TILE_SIZE);
 }
 
-int iW, iH;
+ iW, iH;
 SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
-int x = SCREEN_WIDTH / 2 - iW / 2;
-int y = SCREEN_HEIGHT / 2 - iH / 2;
+ x = SCREEN_WIDTH / 2 - iW / 2;
+ y = SCREEN_HEIGHT / 2 - iH / 2;
 renderTexture(image, renderer, x, y);
 
 
