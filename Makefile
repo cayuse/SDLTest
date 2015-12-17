@@ -11,7 +11,7 @@ else
 CXX = clang++
     UNAME_S := $(shell uname -s)
     ifeq ($(UNAME_S),Linux)
-        SDL = -L/usr/local/lib -lSDL2 -Wl,-rpath=/usr/local/lib
+        SDL = -L/usr/local/lib -lSDL2 -Wl -rpath=/usr/local/lib
 				SDL_INCLUDE = -I/usr/local/include
     endif
     ifeq ($(UNAME_S),Darwin)
