@@ -12,7 +12,7 @@ CXX = clang++
 		UNAME_S := $(shell uname -s)
 		ifeq ($(UNAME_S),Linux)
 				SDL = `pkg-config --cflags --libs sdl2` -lSDL2_image
-				SDL_INCLUDE = -I/usr/local/include
+				SDL_INCLUDE = `pkg-config --cflags --libs sdl2`
 		endif
 		ifeq ($(UNAME_S),Darwin)
 				SDL = -framework SDL2
