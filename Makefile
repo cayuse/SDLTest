@@ -11,7 +11,7 @@ else
 CXX = clang++
 		UNAME_S := $(shell uname -s)
 		ifeq ($(UNAME_S),Linux)
-				SDL = -L/usr/local/lib -lSDL2 -Wl -rpath=/usr/local/lib
+				SDL = `pkg-config --cflags --libs sdl2` -lSDL2_image
 				SDL_INCLUDE = -I/usr/local/include
 		endif
 		ifeq ($(UNAME_S),Darwin)
@@ -22,7 +22,7 @@ CXXFLAGS = -Wall -c -std=c++11 $(SDL_INCLUDE)
 LDFLAGS = $(SDL)
 endif
 
-EXE = SDLTest
+EXE = SDLTestapp
 
 all: $(EXE)
 
