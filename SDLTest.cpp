@@ -225,8 +225,10 @@ while (!quit){
 	SDL_RenderPresent(renderer);
 }
 */
+SDL_Event event;
 int alien_x = x;
 int alien_y = y;
+int alien_xvel, alien_yvel = 0;
 while( SDL_PollEvent( &event ) ){
 	switch( event.type ){
 		/* Look for a keypress */
