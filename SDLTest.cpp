@@ -204,6 +204,7 @@ renderTexture(image, renderer, x, y);
 SDL_RenderPresent(renderer);
 SDL_Delay(2000);
 
+/*
 SDL_Event e;
 bool quit = false;
 while (!quit){
@@ -223,6 +224,76 @@ while (!quit){
 	renderTexture(image, renderer, x, y);
 	SDL_RenderPresent(renderer);
 }
+*/
+int alien_x = x;
+int alien_y = y;
+while( SDL_PollEvent( &event ) ){
+	switch( event.type ){
+		/* Look for a keypress */
+		case SDL_KEYDOWN:
+			/* Check the SDLKey values and move change the coords */
+			switch( event.key.keysym.sym ){
+				case SDLK_LEFT:
+					alien_xvel = -1;
+					break;
+				case SDLK_RIGHT:
+					alien_xvel =  1;
+					break;
+				case SDLK_UP:
+					alien_yvel = -1;
+					break;
+				case SDLK_DOWN:
+					alien_yvel =  1;
+					break;
+				default:
+					break;
+			}
+			break;
+		/* We must also use the SDL_KEYUP events to zero the x */
+		/* and y velocity variables. But we must also be       */
+		/* careful not to zero the velocities when we shouldn't*/
+		case SDL_KEYUP:
+			switch( event.key.keysym.sym ){
+				case SDLK_LEFT:
+					/* We check to make sure the alien is moving */
+					/* to the left. If it is then we zero the    */
+					/* velocity. If the alien is moving to the   */
+					/* right then the right key is still press   */
+					/* so we don't tocuh the velocity            */
+					if( alien_xvel < 0 )
+						alien_xvel = 0;
+					break;
+				case SDLK_RIGHT:
+					if( alien_xvel > 0 )
+						alien_xvel = 0;
+					break;
+				case SDLK_UP:
+					if( alien_yvel < 0 )
+						alien_yvel = 0;
+					break;
+				case SDLK_DOWN:
+					if( alien_yvel > 0 )
+						alien_yvel = 0;
+					break;
+				default:
+					break;
+			}
+			break;
+		
+		default:
+			break;
+	}
+alien_x += alien_xvel;
+alien_y += alien_yvel;
+
+SDL_RenderClear(renderer);
+renderTexture(image, renderer, alien_x, alien_y);
+SDL_RenderPresent(renderer);
+
+}
+
+    /* Update the alien position */
+
 
 cleanup(background, image, renderer, window);
 SDL_Quit();
