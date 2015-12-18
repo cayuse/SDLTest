@@ -229,6 +229,8 @@ SDL_Event event;
 int alien_x = x;
 int alien_y = y;
 int alien_xvel, alien_yvel = 0;
+bool quit = false;
+while (!quit){
 while( SDL_PollEvent( &event ) ){
 	switch( event.type ){
 		/* Look for a keypress */
@@ -281,7 +283,9 @@ while( SDL_PollEvent( &event ) ){
 					break;
 			}
 			break;
-		
+		case SDL_MOUSEBUTTONDOWN:
+			quit = true;
+			break;
 		default:
 			break;
 	}
@@ -294,6 +298,7 @@ SDL_RenderPresent(renderer);
 
 }
 
+}
     /* Update the alien position */
 
 
