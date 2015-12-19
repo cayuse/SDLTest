@@ -16,7 +16,8 @@ CXX = clang++
 		endif
 		ifeq ($(UNAME_S),Darwin)
 				SDL = -framework SDL2
-				SDL_INCLUDE = 
+				SDL_INCLUDE = -I "/Library/Frameworks/SDL2.framework/Headers/"
+        SDL_INCLUDE += -I "/Library/Frameworks/SDL2_image.framework/Headers/"
 		endif
 CXXFLAGS = -Wall -c -std=c++11 $(SDL_INCLUDE)
 LDFLAGS = $(SDL)
