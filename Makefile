@@ -18,17 +18,14 @@ ifeq ($(strip $(SDL2_CFLAGS)),)
 		
 		# on Mac OS X, fall back to trying a framework.
 		ifeq ($(shell uname -s),Darwin)
-			SDL2_CFLAGS = -framework SDL2 -framework SDL2_image
-			SDL2_LDFLAGS = $(SDL2_CFLAGS)
+			SDL2_CFLAGS = -F/Library/Frameworks -DUSING_OSX_FRAMEWORKS=1
+			SDL2_LDFLAGS = -F/Library/Frameworks -framework SDL2 -framework SDL2_image
 		endif
 	endif
 endif
 
 CFLAGS += $(SDL2_CFLAGS)
-CFLAGS += $(SDL2_IMAGE_CFLAGS)
-
 LDFLAGS += $(SDL2_LDFLAGS)
-LDFLAGS += $(SDL2_IMAGE_LDFLAGS)
 
 all: $(MAIN)
 

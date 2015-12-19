@@ -3,8 +3,11 @@
 
 #include <iostream>
 #include <string>
-#include <SDL.h>
-
+#ifdef USING_OSX_FRAMEWORKS
+#   include <SDL2/SDL.h>
+#else
+#   include <SDL.h>
+#endif
 /*
  * Get the resource path for resources located in res/subDir
  * It's assumed the project directory is structured like:
