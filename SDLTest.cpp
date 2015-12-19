@@ -290,15 +290,15 @@ while( SDL_PollEvent( &event ) ){
 		default:
 			break;
 	}
+
+
+}
 alien_x += alien_xvel;
 alien_y += alien_yvel;
 
 SDL_RenderClear(renderer);
 renderTexture(image, renderer, alien_x, alien_y);
 SDL_RenderPresent(renderer);
-
-}
-
 }
     /* Update the alien position */
 
