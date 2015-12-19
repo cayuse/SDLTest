@@ -1,6 +1,7 @@
 MAIN				= SDLTest
 
 CXX					= clang++
+CFLAGS				= -std=c++11 -Wall -O3
 LDFLAGS				= 
 OBJDIR				= build
 SRCDIR				= src

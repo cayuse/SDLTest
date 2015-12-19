@@ -207,7 +207,6 @@ int main(int argc, char **argv){
                       TILE_SIZE);
     }
 
-    iW, iH;
     SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
     x = SCREEN_WIDTH / 2 - iW / 2;
     y = SCREEN_HEIGHT / 2 - iH / 2;
