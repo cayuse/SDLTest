@@ -1,37 +1,46 @@
-## windows shit.. that i con't care about and won't ever be fixing
-ifeq ($(OS),Windows_NT)
-		CCFLAGS += -D WIN32
-		ifeq ($(PROCESSOR_ARCHITECTURE),AMD64)
-				CCFLAGS += -D AMD64
+MAIN				= SDLTest
+
+CXX					= clang++
+LDFLAGS				= 
+OBJDIR				= build
+SRCDIR				= src
+
+PKG_CONFIG			= pkg-config
+PKG_CONFIG_PKGS		= sdl2 SDL2_image
+
+SDL2_CFLAGS			:= $(shell $(PKG_CONFIG) $(PKG_CONFIG_PKGS) --cflags)
+SDL2_LDFLAGS		:= $(shell $(PKG_CONFIG) $(PKG_CONFIG_PKGS) --libs)
+
+ifeq ($(strip $(SDL2_CFLAGS)),)
+	ifeq ($(strip $(SDL2_LDFLAGS)),)
+		# if pkg-config doesn't exist or the packags aren't found, we'll
+		# end up with these variables blank.
+		
+		# on Mac OS X, fall back to trying a framework.
+		ifeq ($(shell uname -s),Darwin)
+			SDL2_CFLAGS = -framework SDL2 -framework SDL2_image
+			SDL2_LDFLAGS = $(SDL2_CFLAGS)
 		endif
-		ifeq ($(PROCESSOR_ARCHITECTURE),x86)
-				CCFLAGS += -D IA32
-		endif
-else
-CXX = clang++
-		UNAME_S := $(shell uname -s)
-		ifeq ($(UNAME_S),Linux)
-				SDL = `pkg-config --cflags --libs sdl2` -lSDL2_image
-				SDL_INCLUDE = `pkg-config --cflags --libs sdl2`
-		endif
-		ifeq ($(UNAME_S),Darwin)
-				SDL = -framework SDL2 -framework SDL2_image
-				SDL_INCLUDE = -I "/Library/Frameworks/SDL2.framework/Headers/"
-				SDL_INCLUDE += -I "/Library/Frameworks/SDL2_image.framework/Headers/"
-		endif
-CXXFLAGS = -Wall -c -std=c++11 $(SDL_INCLUDE)
-LDFLAGS = $(SDL) $(SDL_INCLUDE)
+	endif
 endif
 
-EXE = SDLTestapp
+CFLAGS += $(SDL2_CFLAGS)
+CFLAGS += $(SDL2_IMAGE_CFLAGS)
 
-all: $(EXE)
+LDFLAGS += $(SDL2_LDFLAGS)
+LDFLAGS += $(SDL2_IMAGE_LDFLAGS)
 
-$(EXE): SDLTest.o 
+all: $(MAIN)
+
+$(MAIN): $(OBJDIR)/SDLTest.cpp.o 
 	$(CXX) $(LDFLAGS) $< -o $@
 
-main.o: SDLTest.cpp
-	$(CXX) $(CXXFLAGS) $< -o $@
+$(OBJDIR)/%.cpp.o: $(SRCDIR)/%.cpp $(OBJDIR)
+	$(CXX) $(CFLAGS) -c $< -o $@
+
+$(OBJDIR):
+	mkdir $(OBJDIR)
 
 clean:
-	rm *.o && rm $(EXE)
+	rm -f $(MAIN)
+	rm -Rf $(OBJDIR)
