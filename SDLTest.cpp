@@ -1,11 +1,8 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
-#ifdef LINUX
-#include <SDL2/SDL_image.h>
-#elif defined(MAC_OSX)
+
 #include <SDL_image.h>
-#endif
 #include "res_path.h"
 #include "cleanup.h"
 

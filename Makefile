@@ -15,12 +15,12 @@ CXX = clang++
 				SDL_INCLUDE = `pkg-config --cflags --libs sdl2`
 		endif
 		ifeq ($(UNAME_S),Darwin)
-				SDL = -framework SDL2
+				SDL = -framework SDL2 -framework SDL2_image
 				SDL_INCLUDE = -I "/Library/Frameworks/SDL2.framework/Headers/"
-        SDL_INCLUDE += -I "/Library/Frameworks/SDL2_image.framework/Headers/"
+				SDL_INCLUDE += -I "/Library/Frameworks/SDL2_image.framework/Headers/"
 		endif
 CXXFLAGS = -Wall -c -std=c++11 $(SDL_INCLUDE)
-LDFLAGS = $(SDL)
+LDFLAGS = $(SDL) $(SDL_INCLUDE)
 endif
 
 EXE = SDLTestapp
