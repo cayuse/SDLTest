@@ -14,8 +14,6 @@
 
 const int SCREEN_WIDTH  = 640;
 const int SCREEN_HEIGHT = 480;
-const int TILE_SIZE = 40;
-
 
 /**
 * Log an SDL error with some error message to the output stream of our choice
@@ -135,7 +133,7 @@ int main(int argc, char **argv){
         return 1;
     }
 
-    SDL_Window *window = SDL_CreateWindow("Lesson 2", 100, 100, SCREEN_WIDTH,
+    SDL_Window *window = SDL_CreateWindow("Space Patrol!", 100, 100, SCREEN_WIDTH,
                                           SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
     if (window == nullptr)
     {
@@ -153,37 +151,18 @@ int main(int argc, char **argv){
         return 1;
     }
 
-    /*
-    const std::string resPath = getResourcePath("Lesson2");
-    SDL_Texture *background = loadTexture(resPath + "background.bmp", renderer);
-    SDL_Texture *image = loadTexture(resPath + "image.bmp", renderer);
-    if (background == nullptr || image == nullptr){
-     cleanup(background, image, renderer, window);
-     SDL_Quit();
-     return 1;
-}
-    */
-
-    const std::string resPath = getResourcePath("Lesson3");
-    SDL_Texture *background = loadTexture(resPath + "background.png", renderer);
-    SDL_Texture *image = loadTexture(resPath + "image.png", renderer);
+    const std::string resPath = getResourcePath("ship_art");
+    SDL_Texture *image = loadTexture(resPath + "blueshuttlenoweps.png", renderer);
     //Make sure they both loaded ok
-    if (background == nullptr || image == nullptr)
+    if (image == nullptr)
     {
-        cleanup(background, image, renderer, window);
+        cleanup(image, renderer, window);
         IMG_Quit();
         SDL_Quit();
         return 1;
     }
 
     SDL_RenderClear(renderer);
-
-    int bW, bH;
-    SDL_QueryTexture(background, NULL, NULL, &bW, &bH);
-    renderTexture(background, renderer, 0, 0);
-    renderTexture(background, renderer, bW, 0);
-    renderTexture(background, renderer, 0, bH);
-    renderTexture(background, renderer, bW, bH);
 
     int iW, iH;
     SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
@@ -194,50 +173,6 @@ int main(int argc, char **argv){
     SDL_RenderPresent(renderer);
     SDL_Delay(1000);
 
-    //Determine how many tiles we'll need to fill the screen
-    int xTiles = SCREEN_WIDTH / TILE_SIZE;
-    int yTiles = SCREEN_HEIGHT / TILE_SIZE;
-
-    //Draw the tiles by calculating their positions
-    for (int i = 0; i < xTiles * yTiles; ++i)
-    {
-        int x = i % xTiles;
-        int y = i / xTiles;
-        renderTexture(background, renderer, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE,
-                      TILE_SIZE);
-    }
-
-    SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
-    x = SCREEN_WIDTH / 2 - iW / 2;
-    y = SCREEN_HEIGHT / 2 - iH / 2;
-    renderTexture(image, renderer, x, y);
-
-
-
-    SDL_RenderPresent(renderer);
-    SDL_Delay(2000);
-
-    /*
-    SDL_Event e;
-    bool quit = false;
-    while (!quit){
-     while (SDL_PollEvent(&e)){
-      if (e.type == SDL_QUIT){
-       quit = true;
-      }
-      if (e.type == SDL_KEYDOWN){
-       quit = true;
-      }
-      if (e.type == SDL_MOUSEBUTTONDOWN){
-       quit = true;
-      }
-     }
-     //Render the scene
-     SDL_RenderClear(renderer);
-     renderTexture(image, renderer, x, y);
-     SDL_RenderPresent(renderer);
-}
-    */
     SDL_Event event;
     int alien_x = x;
     int alien_y = y;
@@ -320,7 +255,7 @@ int main(int argc, char **argv){
     /* Update the alien position */
 
 
-    cleanup(background, image, renderer, window);
+    cleanup(image, renderer, window);
     SDL_Quit();
 
 }
