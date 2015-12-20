@@ -2,12 +2,14 @@
 #ifndef _SHIP
 #define _SHIP
 
+#include <cstdint>
+
 class Ship
 {
 private:
-	static const float MAX_SPEED = 12.0;
-  static const float MAX_ACCEL = 2.0;
-  static const int ROTATION_STEP = 3;
+  static constexpr float MAX_SPEED = 120.0;
+  static constexpr float MAX_ACCEL = 2.0;
+  static constexpr int ROTATION_STEP = 3;
   int angle = 0;
   int boxWidth = 640;
   int boxHeight = 480;
@@ -19,10 +21,9 @@ private:
 
 public:
   void rotateCW();
-  void rateteCCW();
+  void rotateCCW();
   void thrust();
-  
-  void getPosition(Uint32 deltaTicks, int &x, int &y, int &angle);
+  void getPosition(uint32_t deltaTicks, int &x, int &y, int &myAngle);
 
 }; // end Ship
 

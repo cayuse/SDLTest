@@ -1,6 +1,8 @@
 #include "Ship.h"
+#include "Timer.h"
 #include <iostream>
 #include <string>
+#include <cstdint>
 
 #ifdef USING_OSX_FRAMEWORKS
 #   include <SDL2/SDL.h>
@@ -125,7 +127,7 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
 
 int main(int argc, char **argv){
     Timer delta;
-    Ship ship();
+    Ship ship;
     
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
@@ -267,7 +269,7 @@ int main(int argc, char **argv){
         {
           ship.thrust();
         }
-        ship.getPosition(delta.get_ticks(), alien_x, alien_y, alien_angle)
+        ship.getPosition(delta.get_ticks(), alien_x, alien_y, alien_angle);
         SDL_RenderClear(renderer);
         renderTextureEx(image, renderer, alien_x, alien_y, 64, 64, alien_angle);
         delta.start();

@@ -1,38 +1,60 @@
 #include "Ship.h"
 #include <cmath>
+#include <cstdint> 
 
 
 #define PI 3.14159265
 
-void rotateCW()
+void Ship::rotateCW()
 {
-  angle = (angle - ROTATION_STEP) % 360;
+  angle = (angle + Ship::ROTATION_STEP) % 360;
 }
 
-void rateteCCW()
+void Ship::rotateCCW()
 {
-  angle = (angle + ROTATION_STEP) % 360;
+  angle = (angle - Ship::ROTATION_STEP) % 360;
 }
 
-void thrust()
+void Ship::thrust()
 {
   //apply the thrust vector
-  x_vel += MAX_ACCEL * (cos ( (double)angle * PI / 180.0 ));
-  y_vel += MAX_ACCEL * (sin ( (double)angle * PI / 180.0 ));
+  x_vel += Ship::MAX_ACCEL * (sin ( (double)angle * PI / 180.0 ));
+  y_vel -= Ship::MAX_ACCEL * (cos ( (double)angle * PI / 180.0 ));
   
-  if (x_vel > MAX_SPEED)
+  if (x_vel > Ship::MAX_SPEED)
   {
-    x_vel = MAX_SPEED;
+    x_vel = Ship::MAX_SPEED;
   }
-  if (y_vel > MAX_SPEED)
+  if (x_vel < 0 - Ship::MAX_SPEED)
   {
-    y_vel = MAX_SPEED;
+    x_vel = 0 - Ship::MAX_SPEED;
   }
-  
+  if (y_vel > Ship::MAX_SPEED)
+  {
+    y_vel = Ship::MAX_SPEED;
+  }
+  if (y_vel < Ship::MAX_SPEED)
+  {
+    y_vel = 0 - Ship::MAX_SPEED;
+  }  
 }
 
-void getPosition(Uint32 deltaTicks, int &x, int &y, int &angle)
+void Ship::getPosition(uint32_t deltaTicks, int &x, int &y, int &myAngle)
 {
-  
+   x_pos += x_vel * ( deltaTicks / 1000.f );
+   y_pos += y_vel * ( deltaTicks / 1000.f );
+   
+   if (x_pos >= boxWidth || x_pos <= 0)
+   {
+    x_vel = 0 - x_vel;
+   }
+      if (y_pos >= boxHeight || y_pos  <= 0)
+   {
+    y_vel = 0 - y_vel;
+   }
+   
+   x = x_pos;
+   y = y_pos;
+   myAngle = angle;
 }
 
