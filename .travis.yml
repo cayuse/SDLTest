@@ -1,11 +1,13 @@
+os:
+    - linux
+    - osx
+
 sudo: required
 dist: trusty
 
 language: c++
 compiler: clang
 
-before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq libsdl2-dev libsdl2-image-dev
+before_install: .travis/before_install.sh
 
 script: make
