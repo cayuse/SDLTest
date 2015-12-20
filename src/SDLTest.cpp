@@ -39,31 +39,7 @@ SDL_Texture* loadTexture(const std::string &file, SDL_Renderer *ren){
     return texture;
 }
 
-/**
-* Loads a BMP image into a texture on the rendering device
-* @param file The BMP image file to load
-* @param ren The renderer to load the texture onto
-* @return the loaded texture, or nullptr if something went wrong.
- 
-SDL_Texture* loadTexture(const std::string &file, SDL_Renderer *ren){
- //Initialize to nullptr to avoid dangling pointer issues
- SDL_Texture *texture = nullptr;
- //Load the image
- SDL_Surface *loadedImage = SDL_LoadBMP(file.c_str());
- //If the loading went ok, convert to texture and return the texture
- if (loadedImage != nullptr){
-  texture = SDL_CreateTextureFromSurface(ren, loadedImage);
-  SDL_FreeSurface(loadedImage);
-  //Make sure converting went ok too
-  if (texture == nullptr){
-   logSDLError(std::cout, "CreateTextureFromSurface");
-  }
- }
- else {
-  logSDLError(std::cout, "LoadBMP");
- }
- return texture;
-}*/
+
 
 /**
 * Draw an SDL_Texture to an SDL_Renderer at position x, y, with some desired
@@ -83,6 +59,34 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w, int
     dst.w = w;
     dst.h = h;
     SDL_RenderCopy(ren, tex, NULL, &dst);
+}
+
+/**
+* Draw an SDL_Texture to an SDL_Renderer at position x, y, with some desired
+* width and height
+* @param tex The source texture we want to draw
+* @param ren The renderer we want to draw to
+* @param x The x coordinate to draw to
+* @param y The y coordinate to draw to
+* @param w The width of the texture to draw
+* @param h The height of the texture to draw
+*
+* int SDL_RenderCopyEx(SDL_Renderer*          renderer,
+                     SDL_Texture*           texture,
+                     const SDL_Rect*        srcrect,
+                     const SDL_Rect*        dstrect,
+                     const double           angle,
+                     const SDL_Point*       center,
+                     const SDL_RendererFlip flip)
+*/
+void renderTextureEx(SDL_Texture *tex, SDL_Renderer *ren, int x, int y, int w, int h, int angle){
+    //Setup the destination rectangle to be at the position we want
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    dst.w = w;
+    dst.h = h;
+    SDL_RenderCopyEx(ren, tex, NULL, &dst, angle, NULL, SDL_FLIP_NONE);
 }
 
 /**
@@ -152,7 +156,7 @@ int main(int argc, char **argv){
     }
 
     const std::string resPath = getResourcePath("ship_art");
-    SDL_Texture *image = loadTexture(resPath + "blueshuttlenoweps.png", renderer);
+    SDL_Texture *image = loadTexture(resPath + "speedship.png", renderer);
     //Make sure they both loaded ok
     if (image == nullptr)
     {
@@ -168,7 +172,7 @@ int main(int argc, char **argv){
     SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
     int x = SCREEN_WIDTH / 2 - iW / 2;
     int y = SCREEN_HEIGHT / 2 - iH / 2;
-    renderTexture(image, renderer, x, y);
+    renderTextureEx(image, renderer, x, y, 64, 64, 0);
 
     SDL_RenderPresent(renderer);
     SDL_Delay(1000);
@@ -176,7 +180,9 @@ int main(int argc, char **argv){
     SDL_Event event;
     int alien_x = x;
     int alien_y = y;
-    int alien_xvel, alien_yvel = 0;
+    int alien_angle = 0;
+    int alien_xvel = 0;
+    int alien_yvel = 0;
     bool quit = false;
     while (!quit)
     {
@@ -190,10 +196,10 @@ int main(int argc, char **argv){
                 switch( event.key.keysym.sym )
                 {
                 case SDLK_LEFT:
-                    alien_xvel = -1;
+                    alien_xvel = -3;
                     break;
                 case SDLK_RIGHT:
-                    alien_xvel =  1;
+                    alien_xvel =  3;
                     break;
                 case SDLK_UP:
                     alien_yvel = -1;
@@ -245,11 +251,11 @@ int main(int argc, char **argv){
 
 
         }
-        alien_x += alien_xvel;
+        alien_angle += alien_xvel;
         alien_y += alien_yvel;
 
         SDL_RenderClear(renderer);
-        renderTexture(image, renderer, alien_x, alien_y);
+        renderTextureEx(image, renderer, alien_x, alien_y, 64, 64, alien_angle);
         SDL_RenderPresent(renderer);
     }
     /* Update the alien position */
