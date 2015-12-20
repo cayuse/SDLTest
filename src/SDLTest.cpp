@@ -1,5 +1,4 @@
-#include <iostream>
-#include <string>
+#include "res_path.h"
 
 #ifdef USING_OSX_FRAMEWORKS
 #   include <SDL2/SDL.h>
@@ -9,8 +8,14 @@
 #   include <SDL_image.h>
 #endif
 
-#include "res_path.h"
-#include "cleanup.h"
+#include <iostream>
+#include <memory>
+#include <string>
+
+// an alias for an otherwise cumbersome template type:
+// a unique_ptr with simple function pointer as deleter
+template<typename T>
+using cleanup_unique_ptr = std::unique_ptr<T, void (*)(T *)>;
 
 const int SCREEN_WIDTH  = 640;
 const int SCREEN_HEIGHT = 480;
@@ -32,13 +37,14 @@ void logSDLError(std::ostream &os, const std::string &msg){
 * @param ren The renderer to load the texture onto
 * @return the loaded texture, or nullptr if something went wrong.
 */
-SDL_Texture* loadTexture(const std::string &file, SDL_Renderer *ren){
+cleanup_unique_ptr<SDL_Texture>
+loadTexture(const std::string &file, SDL_Renderer *ren){
     SDL_Texture *texture = IMG_LoadTexture(ren, file.c_str());
     if (texture == nullptr)
     {
         logSDLError(std::cout, "LoadTexture");
     }
-    return texture;
+    return cleanup_unique_ptr<SDL_Texture>(texture, SDL_DestroyTexture);
 }
 
 /**
@@ -127,29 +133,39 @@ int main(int argc, char **argv){
         logSDLError(std::cout, "SDL_Init");
         return 1;
     }
+    
+    atexit(SDL_Quit);
 
     if ((IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG) != IMG_INIT_PNG)
     {
         logSDLError(std::cout, "IMG_Init");
-        SDL_Quit();
         return 1;
     }
-
-    SDL_Window *window = SDL_CreateWindow("Lesson 2", 100, 100, SCREEN_WIDTH,
-                                          SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    
+    atexit(IMG_Quit);
+    
+    cleanup_unique_ptr<SDL_Window> window(
+        SDL_CreateWindow(
+            "Lesson 2",
+            100, 100,
+            SCREEN_WIDTH, SCREEN_HEIGHT,
+            SDL_WINDOW_SHOWN),
+        SDL_DestroyWindow);
     if (window == nullptr)
     {
         logSDLError(std::cout, "CreateWindow");
-        SDL_Quit();
         return 1;
     }
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
-                             SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    
+    cleanup_unique_ptr<SDL_Renderer> renderer(
+        SDL_CreateRenderer(
+            window.get(),
+            -1,
+            SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC),
+        SDL_DestroyRenderer);
     if (renderer == nullptr)
     {
         logSDLError(std::cout, "CreateRenderer");
-        cleanup(window);
-        SDL_Quit();
         return 1;
     }
 
@@ -159,39 +175,35 @@ int main(int argc, char **argv){
     SDL_Texture *image = loadTexture(resPath + "image.bmp", renderer);
     if (background == nullptr || image == nullptr){
      cleanup(background, image, renderer, window);
-     SDL_Quit();
      return 1;
 }
     */
 
     const std::string resPath = getResourcePath("Lesson3");
-    SDL_Texture *background = loadTexture(resPath + "background.png", renderer);
-    SDL_Texture *image = loadTexture(resPath + "image.png", renderer);
+    auto background = loadTexture(resPath + "background.png", renderer.get());
+    auto image = loadTexture(resPath + "image.png", renderer.get());
     //Make sure they both loaded ok
     if (background == nullptr || image == nullptr)
     {
-        cleanup(background, image, renderer, window);
-        IMG_Quit();
-        SDL_Quit();
         return 1;
     }
 
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(renderer.get());
 
     int bW, bH;
-    SDL_QueryTexture(background, NULL, NULL, &bW, &bH);
-    renderTexture(background, renderer, 0, 0);
-    renderTexture(background, renderer, bW, 0);
-    renderTexture(background, renderer, 0, bH);
-    renderTexture(background, renderer, bW, bH);
+    SDL_QueryTexture(background.get(), NULL, NULL, &bW, &bH);
+    renderTexture(background.get(), renderer.get(), 0, 0);
+    renderTexture(background.get(), renderer.get(), bW, 0);
+    renderTexture(background.get(), renderer.get(), 0, bH);
+    renderTexture(background.get(), renderer.get(), bW, bH);
 
     int iW, iH;
-    SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
+    SDL_QueryTexture(image.get(), NULL, NULL, &iW, &iH);
     int x = SCREEN_WIDTH / 2 - iW / 2;
     int y = SCREEN_HEIGHT / 2 - iH / 2;
-    renderTexture(image, renderer, x, y);
+    renderTexture(image.get(), renderer.get(), x, y);
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(renderer.get());
     SDL_Delay(1000);
 
     //Determine how many tiles we'll need to fill the screen
@@ -203,18 +215,18 @@ int main(int argc, char **argv){
     {
         int x = i % xTiles;
         int y = i / xTiles;
-        renderTexture(background, renderer, x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE,
+        renderTexture(background.get(), renderer.get(), x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE,
                       TILE_SIZE);
     }
 
-    SDL_QueryTexture(image, NULL, NULL, &iW, &iH);
+    SDL_QueryTexture(image.get(), NULL, NULL, &iW, &iH);
     x = SCREEN_WIDTH / 2 - iW / 2;
     y = SCREEN_HEIGHT / 2 - iH / 2;
-    renderTexture(image, renderer, x, y);
+    renderTexture(image.get(), renderer.get(), x, y);
 
 
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(renderer.get());
     SDL_Delay(2000);
 
     /*
@@ -313,14 +325,8 @@ int main(int argc, char **argv){
         alien_x += alien_xvel;
         alien_y += alien_yvel;
 
-        SDL_RenderClear(renderer);
-        renderTexture(image, renderer, alien_x, alien_y);
-        SDL_RenderPresent(renderer);
+        SDL_RenderClear(renderer.get());
+        renderTexture(image.get(), renderer.get(), alien_x, alien_y);
+        SDL_RenderPresent(renderer.get());
     }
-    /* Update the alien position */
-
-
-    cleanup(background, image, renderer, window);
-    SDL_Quit();
-
 }
