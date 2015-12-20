@@ -1,3 +1,4 @@
+#include "Ship.h"
 #include <iostream>
 #include <string>
 
@@ -123,7 +124,9 @@ void renderTexture(SDL_Texture *tex, SDL_Renderer *ren, int x, int y){
 
 
 int main(int argc, char **argv){
-
+    Timer delta;
+    Ship ship();
+    
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0)
     {
         logSDLError(std::cout, "SDL_Init");
@@ -176,7 +179,7 @@ int main(int argc, char **argv){
 
     SDL_RenderPresent(renderer);
     SDL_Delay(1000);
-
+    delta.start();
     SDL_Event event;
     int alien_x = x;
     int alien_y = y;
@@ -196,10 +199,10 @@ int main(int argc, char **argv){
                 switch( event.key.keysym.sym )
                 {
                 case SDLK_LEFT:
-                    alien_xvel = -3;
+                    alien_xvel = -1;
                     break;
                 case SDLK_RIGHT:
-                    alien_xvel =  3;
+                    alien_xvel =  1;
                     break;
                 case SDLK_UP:
                     alien_yvel = -1;
@@ -251,11 +254,23 @@ int main(int argc, char **argv){
 
 
         }
-        alien_angle += alien_xvel;
-        alien_y += alien_yvel;
-
+        if (alien_xvel > 0)
+        {
+          ship.rotateCW();
+        }
+        if (alien_xvel < 0)
+        {
+          ship.rotateCCW();
+        }
+        
+        if (alien_yvel < 0)
+        {
+          ship.thrust();
+        }
+        ship.getPosition(delta.get_ticks(), alien_x, alien_y, alien_angle)
         SDL_RenderClear(renderer);
         renderTextureEx(image, renderer, alien_x, alien_y, 64, 64, alien_angle);
+        delta.start();
         SDL_RenderPresent(renderer);
     }
     /* Update the alien position */
