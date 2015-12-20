@@ -27,5 +27,4 @@ public:
 
 }; // end Ship
 
-#include "Ship.cpp"
 #endif

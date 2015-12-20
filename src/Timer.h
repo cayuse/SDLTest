@@ -32,5 +32,4 @@ class Timer
     bool is_paused();
 };
 
-#include "Timer.cpp"
 #endif

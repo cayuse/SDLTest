@@ -28,10 +28,13 @@ endif
 CFLAGS += $(SDL2_CFLAGS)
 LDFLAGS += $(SDL2_LDFLAGS)
 
+SRCS = $(wildcard $(SRCDIR)/*.cpp)
+OBJS = $(patsubst $(SRCDIR)/%, $(OBJDIR)/%.o,$(SRCS))
+
 all: $(MAIN)
 
-$(MAIN): $(OBJDIR)/SDLTest.cpp.o 
-	$(CXX) $(LDFLAGS) $< -o $@
+$(MAIN): $(OBJS)
+	$(CXX) $(LDFLAGS) $(OBJS) -o $@
 
 $(OBJDIR)/%.cpp.o: $(SRCDIR)/%.cpp $(OBJDIR)
 	$(CXX) $(CFLAGS) -c $< -o $@
