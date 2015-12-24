@@ -17,26 +17,18 @@ void Ship::rotateCCW()
 
 void Ship::thrust()
 {
-  //apply the thrust vector
-  x_vel += Ship::MAX_ACCEL * (sin ( (double)angle * PI / 180.0 ));
-  y_vel -= Ship::MAX_ACCEL * (cos ( (double)angle * PI / 180.0 ));
-  
-  if (x_vel > Ship::MAX_SPEED)
-  {
-    x_vel = Ship::MAX_SPEED;
-  }
-  if (x_vel < -(Ship::MAX_SPEED))
-  {
-    x_vel = -(Ship::MAX_SPEED);
-  }
-  if (y_vel > Ship::MAX_SPEED)
-  {
-    y_vel = Ship::MAX_SPEED;
-  }
-  if (y_vel < -(Ship::MAX_SPEED))
-  {
-    y_vel = -(Ship::MAX_SPEED);
-  }  
+    double trueSpeed = 0;
+    double new_x_vel = x_vel + Ship::MAX_ACCEL * (sin ( (double)angle * PI / 180.0 ));
+    double new_y_vel = y_vel + Ship::MAX_ACCEL * (cos ( (double)angle * PI / 180.0 ));
+
+    trueSpeed = getTrueSpeed(new_x_vel, new_y_vel);
+
+    if (trueSpeed != MAX_SPEED)
+    {
+        //apply the thrust vector
+        x_vel += Ship::MAX_ACCEL * (sin ( (double)angle * PI / 180.0 ));
+        y_vel -= Ship::MAX_ACCEL * (cos ( (double)angle * PI / 180.0 ));
+    }
 }
 
 void Ship::getPosition(uint32_t deltaTicks, int &x, int &y, int &myAngle)
@@ -58,3 +50,9 @@ void Ship::getPosition(uint32_t deltaTicks, int &x, int &y, int &myAngle)
    myAngle = angle;
 }
 
+double Ship::getTrueSpeed(double new_x_vel, double new_y_vel)
+{
+    double trueSpeed;
+    trueSpeed = sqrt(new_x_vel * new_x_vel + new_y_vel * new_y_vel);
+    return trueSpeed;
+}

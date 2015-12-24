@@ -17,7 +17,7 @@ private:
   int y_pos = boxHeight / 2;
   double x_vel;
   double y_vel;
-  
+  double getTrueSpeed(double new_x_vel, double new_y_vel);
 
 public:
   void rotateCW();
