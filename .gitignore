@@ -48,6 +48,7 @@
 # IDE SHIT   #
 ##############
 *.idea
+*.komodoproject
 
 
 ##############
