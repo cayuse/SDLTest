@@ -7,7 +7,7 @@
 class Ship
 {
 private:
-  static constexpr float MAX_SPEED = 120.0;
+  static constexpr float MAX_SPEED = 1200.0;
   static constexpr float MAX_ACCEL = 12.0;
   static constexpr int ROTATION_STEP = 3;
   int angle = 0;

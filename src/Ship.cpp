@@ -23,11 +23,17 @@ void Ship::thrust()
 
     trueSpeed = getTrueSpeed(new_x_vel, new_y_vel);
 
-    if (trueSpeed != MAX_SPEED)
+    if (trueSpeed <= MAX_SPEED)
     {
         //apply the thrust vector
         x_vel += Ship::MAX_ACCEL * (sin ( (double)angle * PI / 180.0 ));
         y_vel -= Ship::MAX_ACCEL * (cos ( (double)angle * PI / 180.0 ));
+        trueSpeed = getTrueSpeed(x_vel, y_vel);
+        if (trueSpeed > MAX_SPEED)
+        {
+            x_vel = Ship::MAX_SPEED * (sin ( (double)angle * PI / 180.0 ));
+            y_vel = -(Ship::MAX_SPEED * (cos ( (double)angle * PI / 180.0 )));
+        }
     }
 }
 
